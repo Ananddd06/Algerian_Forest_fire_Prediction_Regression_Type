@@ -1,0 +1,1 @@
+# Algerian_Forest_fire_Prediction_Regression_Type
