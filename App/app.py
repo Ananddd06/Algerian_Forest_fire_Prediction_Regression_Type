@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import joblib
 import os
+import numpy as np
 
 app = Flask(__name__)
 
-# Load the model (ensure the model path is correct)
-model_path = '/Users/anand/Desktop/Machine Learning/11.Projects/01.Algerian_Forest_Fires/App/Model_file/scaled_model.pkl'
+# Paths
+model_path = '/Users/anand/Desktop/Machine Learning/11.Projects/01.Algerian_Forest_Fires/App/Model_file/final_model.pkl'
+
+# Load the pipeline model (includes scaler + classifier)
 if os.path.exists(model_path):
     model = joblib.load(model_path)
 else:
@@ -13,15 +16,13 @@ else:
 
 @app.route('/')
 def home():
-    # Home page route that renders an HTML form
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST', 'GET'])
 def predict():
-    # API route to handle prediction requests from the form
     if request.method == 'POST':
         try:
-            # Extract input values from the form (make sure keys match form field names)
+            # Extract inputs from the form
             temperature = float(request.form.get('Temperature'))
             RH = float(request.form.get('RH'))
             Ws = float(request.form.get('Ws'))
@@ -32,25 +33,22 @@ def predict():
             ISI = float(request.form.get('ISI'))
             BUI = float(request.form.get('BUI'))
 
-            # Prepare the data for prediction
-            features = [[temperature, RH, Ws, Rain, FFMC, DMC, DC, ISI, BUI]]
+            # Prepare input for prediction
+            input_data = np.array([[temperature, RH, Ws, Rain, FFMC, DMC, DC, ISI, BUI]])
 
-            # Make a prediction using the loaded model
-            prediction = model.predict(features)
+            # Predict directly (scaling is inside pipeline)
+            prediction = model.predict(input_data)
 
-            # Render the result back to the page
             return render_template('index.html', prediction=prediction[0])
 
         except Exception as e:
             return jsonify({"error": str(e)})
 
-    # If not a POST request, render the page again without prediction
     return render_template('index.html')
 
 @app.route('/favicon.ico')
 def favicon():
-    # Route to handle the favicon.ico request, return an empty response
-    return '', 204  # No content
+    return '', 204
 
 if __name__ == '__main__':
     app.run(debug=True)

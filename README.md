@@ -95,7 +95,10 @@ joblib.dump(model_pipeline, 'scaled_model.pkl')
 
 ## Result Interpretation 📝
 
-The model returns a prediction of either **Fire** or **Not Fire**. These predictions are based on the environmental conditions input by the user.
+The model returns a prediction of Fire Weather Index. These predictions are based on the environmental conditions input by the user.
+
+![alt text](Images/webpage.png)
+![alt text](Images/result.png)
 
 ## Running the Application 💻
 
